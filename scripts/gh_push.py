@@ -250,11 +250,14 @@ def L3_contents_push(local: str, repo_full: str, branch: str) -> bool:
             with open(full, "rb") as fh:
                 content = fh.read()
             b64 = base64.b64encode(content).decode()
-            # 查询已有文件，拿到 sha（用于更新）
-            existing = gh_api("GET", f"repos/{repo_full}/contents/{rel}?ref={branch}", retries=1)
+            # 查询已有文件，拿到 sha（用于更新）；空仓库/文件不存在时忽略
+            try:
+                existing = gh_api("GET", f"repos/{repo_full}/contents/{rel}?ref={branch}", retries=1)
+            except RuntimeError:
+                existing = None
             sha = existing.get("sha") if isinstance(existing, dict) else None
             data = {
-                "message": f"ConformalForge: update {rel} (author: 晨星)",
+                "message": f"ConformalForge: add/update {rel} (author: 晨星)",
                 "content": b64,
                 "branch": branch,
             }
