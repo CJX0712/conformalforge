@@ -1,0 +1,11 @@
+# ConformalForge · 锁定依赖（手写可安装 name==version，避免 file:// 本机路径）
+# 生成环境：Windows 11 / Python 3.13.12 / numpy 2.x
+# 说明：CI 将按此版本安装以规避 numpy 版本漂移翻转门禁。
+numpy==2.5.3
+scipy==1.18.1
+scikit-learn==1.9.1
+
+# 开发 / CI 锁定
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.16.10

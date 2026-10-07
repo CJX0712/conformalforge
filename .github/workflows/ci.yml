@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  ci:
+    name: lint + test + demo (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install locked deps + dev tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.lock.txt
+          python -m pip install pytest pytest-cov ruff
+          python -m pip install -e .
+
+      - name: Ruff lint (check)
+        run: python -m ruff check .
+
+      - name: Ruff format (check)
+        run: python -m ruff format --check .
+
+      - name: Pytest + coverage
+        run: python -m pytest -q -W ignore::UserWarning --cov=conformalforge --cov-report=term
+
+      - name: Demo smoke + determinism (run twice, must be bit-identical)
+        run: |
+          python -m conformalforge.examples.run_demo
+          python -m conformalforge.examples.run_demo
+
+      - name: Secret scan
+        run: |
+          git grep -nE "(sk-|api[_-]?key|token|secret|password)" -- '*.py' '*.md' || echo "no secrets found"
