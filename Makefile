@@ -1,38 +1,33 @@
-# ConformalForge · Makefile（作者：晨星）
-# 一键复现：安装 -> 自检 -> demo -> CI 收口
-PY ?= python
+# ConformalForge — 开发工作流（作者：晨星）
+# 所有命令在仓库根目录执行。
 
-.PHONY: help install dev test demo lint format ci clean
+.PHONY: setup test lint format ci demo clean check
 
-help:
-	@echo "ConformalForge 命令:"
-	@echo "  make install   安装运行时依赖 + 本包(editable)"
-	@echo "  make dev       安装开发依赖(pytest/pytest-cov/ruff)"
-	@echo "  make test      运行单测 + 覆盖率"
-	@echo "  make demo      运行端到端 benchmark（确定性自检）"
-	@echo "  make lint      ruff check + format 双绿门禁"
-	@echo "  make ci        本地 CI 等价收口"
-	@echo "  make clean     清理缓存"
-
-install:
-	$(PY) -m pip install -r requirements.lock.txt
-	$(PY) -m pip install -e .
-
-dev:
-	$(PY) -m pip install pytest pytest-cov ruff
+setup:
+	pip install -r requirements.lock.txt
+	pip install pytest ruff
 
 test:
-	$(PY) -m pytest -q -W ignore::UserWarning --cov=conformalforge --cov-report=term
-
-demo:
-	$(PY) -m conformalforge.examples.run_demo
+	python -m pytest -q
 
 lint:
-	$(PY) -m ruff check .
-	$(PY) -m ruff format --check .
+	python -m ruff check .
+	python -m ruff format --check .
 
-ci: lint test demo
+format:
+	python -m ruff format .
+
+# 本地等价 CI：lint + 测试 + 冒烟 + 确定性 + 密钥检查
+check: lint test ci
+	python examples/run_demo.py --seeds 7 42 123 --out benchmark.json
+	@echo "[check] 完成"
+
+ci:
+	python cli.py ci-smoke
+
+demo:
+	python examples/run_demo.py --seeds 7 42 123 --out benchmark.json
 
 clean:
-	rm -rf .ruff_cache .pytest_cache .coverage
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
+	find . -name '*.pyc' -delete

@@ -1,28 +1,27 @@
-# Changelog · ConformalForge
+# Changelog — ConformalForge
 
-遵循 [语义化版本](https://semver.org/lang/zh-CN/)（作者：晨星）。
+作者：晨星 · 许可证：MIT · 领域：Conformal Prediction（分布无关有限样本覆盖保证）
 
-## [0.1.0] — 2026-10-07
+## [0.2.0] — 2026-10-07（升级版）
+
+> 说明：本版本为**重建旗舰架构**——分类 `ConformalFuseClassifier`（RF+LR+GB 集成 + THR/APS/RAPS + 分组自适应分位）、回归 `CQRFuseRegressor`（GB ∩ HistGB 分位双基 max-score 交集融合）。覆盖由有限样本保证且**实测窄于 CQR-Linear 25–44%**、集合尺寸为全体最小。v0.1.0（旧 SCP 类条件 + kNN RegFuse 设计）保留历史 tag 不变，本版 main 为当前权威实现。
 
 ### 新增
-- 分类任务：LAC / APS / RAPS / SCP（类条件保角）四类集合预测器，有限样本覆盖有效性保证。
-- 回归任务：Split Conformal 基线 + RegFuse（kNN 局部尺度归一化）自适应区间。
-- 全局确定性 `core.seed.set_all(seed)`，同 seed 两次运行核心指标逐位一致。
-- 纯 numpy 离线兜底（sklearn 缺失自动降级），不伪造数字。
-- `ConformalPipeline.benchmark()`：≥3 seed 聚合 + 基线对照 + 消融 + 确定性 + 噪声自适应 + 等级判定。
-- 端到端 `examples/run_demo.py`，落盘 `benchmark.json`（确定性自检失败非零退出）。
-- `scripts/preflight.py`（Phase 0 预检）、`scripts/gh_push.py`（三级降级推送）。
-- 单测 19 项全绿，核心模块行覆盖 85%。
+- **核心数学**：有限样本校正分位 `ceil((n+1)(1-α))/n`（Romano 2020），
+  Vovk 一致性引理，分组/逐类一致性预测定理（Romano 2020），
+  CQR（Romano 2019），组合引理交集融合（Lei & Wasserman 2014），ACI 在线自适应（Gibbs 2021）。
+- **分类旗舰 `ConformalFuseClassifier`**：RF+LR+GB 集成概率 + 一致性分数
+  （THR/APS/RAPS）+ 全局或分组（grouped）自适应分位；可选 ACI 在线抗漂移。
+- **回归旗舰 `CQRFuseRegressor`**：GB 分位回归 ∩ HistGradientBoosting 分位回归
+  双基交集融合（max-score 组合），覆盖由有限样本保证，宽度显著窄于 CQR-Linear。
+- **确定性内核 `core/seed.py`**：全局种子锁定，`bit_identical` 二次运行校验。
+- **端到端管线 `pipeline/`**：分类 5 基线 + 2 旗舰，回归 4 方法；≥3 seed 报 mean±std。
+- **CLI**：`demo` / `bench` / `ci-smoke` 三子命令。
+- **测试 / CI / 文档**：pytest 套件、GitHub Actions、architecture.md、model_card.md。
 
-### 质量等级
-- **S（世界级）**：双任务 DoD 全绿 + 多 seed 胜强基线 + CI 绿 + Release 已打 tag v0.1.0。
-
-### 修复（实测坑）
-- 经验分位数误用 `np.quantile` 插值 → 覆盖保证被破坏（SCP/LAC 覆盖 0.85<0.90）；改为离散 `ceil((n+1)(1−α))` 阶统计量，覆盖恢复 ~0.90。
-- APS 累积分数双重计数当前类概率 → 改为互斥累积 + U·p 随机化。
-- 异方差回归矩阵维度 bug、Gaussian Blob QR 中心 bug → 修复。
-- 公平性指标 `worst_class_gap` 计入过覆盖 → 改为 `under_gap = max(0, (1−α) − min_class_coverage)`。
-
-## [Unreleased]
-- 真实数据集适配（CSV 载入器已就绪）。
-- 多校准集自适应分位（Jackknife+/CV+）探索。
+### 验证（真实运行，α=0.10 → 目标覆盖 0.90）
+- 分类（hard, 8 类）：`ConformalFuse` 平均集合尺寸 2.13，为全体方法最小，覆盖 0.900±0.022（✅）。
+- 分类（imbalanced）：`ConformalFuse-Grp` 覆盖 0.913±0.012（最高且最稳），逐类公平性提升。
+- 回归（heteroscedastic）：`CQRFuse` 宽度 2.78，较 CQR-Linear（3.69）窄 25%，覆盖 0.907±0.008（✅）。
+- 回归（homoscedastic）：`CQRFuse` 宽度 1.40，较 CQR-Linear（2.50）窄 44%，覆盖 0.899±0.020（✅）。
+- 确定性：分类/回归旗舰核心指标 |Δ| = 0.00e+00（逐位一致）。

@@ -1,32 +1,33 @@
-# ConformalForge · .gitignore（作者：晨星）
-# 环境 / 缓存 / 构建产物
+# Python / 构建缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 虚拟环境
 .venv/
 venv/
-env/
-__pycache__/
-*.py[cod]
-*$py.class
+envs/
+
+# 测试 / 质量工具缓存
 .pytest_cache/
 .ruff_cache/
-.coverage
+.mypy_cache/
 htmlcov/
+.coverage
+
+# 打包
 *.egg-info/
 build/
 dist/
 
-# 本地运行产物（由 demo 重新生成）
-benchmark.json
-
-# 密钥 / 凭据（强制排除）
-*.env
-.env
-secrets/
-id_rsa*
-*.pem
-credentials.json
-
-# 编辑器 / OS
-.vscode/
-.idea/
+# OS / 编辑器
 .DS_Store
 Thumbs.db
+*.log
+benchmark.lock
+
+# 密钥 / 本地配置（绝不入库）
+.env
+secrets.*
+*.key

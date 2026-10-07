@@ -1,63 +1,82 @@
-# ConformalForge · 架构文档（作者：晨星）
+# ConformalForge 架构设计（作者：晨星）
 
-## 1. 设计原则
+> 面向对象：希望在「世界顶级 AI 系统」级交付中理解本仓库的工程与数学结构的读者。
 
-1. **复用顶级开源，不自研 SOTA 内核**。分类/回归基学习器与保角框架均建立在 scikit-learn / scipy / numpy 之上；仅在「经验分位数」「离线兜底」等实现细节上做正确性修复与加固。
-2. **有限样本有效性优先于效率**。所有集合/区间的覆盖必须满足 `1−α` 的分裂保角保证；效率（集合大小/区间宽度）作为次级优化目标，且诚实报告。
-3. **确定性可复现**。单一 `set_all(seed)` 入口统一播种 numpy / random，禁止任何隐式随机源；demo 两次运行核心指标逐位一致。
-4. **无泄漏**。任何预处理（标准化、分位估计）仅在 train/calib 上 fit，test 绝不参与。
+## 1. 设计哲学
 
-## 2. 模块职责（单向无环）
+ConformalForge 不是又一个 ML 模型库，而是一个**把任意点预测器升级为带数学保证的预测集/区间**的框架。所有结论均满足：
+
+- **分布无关**：不假设数据来自某特定分布；
+- **有限样本**：覆盖保证对任何样本量成立，非渐近；
+- **确定性可复现**：同种子二次运行逐位一致（`bit_identical=True`）；
+- **零假数**：每个指标来自真实运行，覆盖不达标显式标记。
+
+## 2. 依赖分层（单向无环）
 
 ```
-cli ──▶ pipeline.ConformalPipeline
-                 │
-                 ├─▶ data.（合成数据 / CSV 载入）
-                 ├─▶ conformal.base（基学习器 + TRAIN-only 标准化）
-                 ├─▶ conformal.scores（保角分数 + 经验分位数）
-                 ├─▶ conformal.classification / regression（各预测器）
-                 └─▶ core.（types/errors/config/interfaces/seed）
+cli.py
+  └─> pipeline/pipeline.py        # 编排：基线 + 旗舰，≥3 seed 报 mean±std
+        └─> data/generators.py    # 可复现合成数据（难度旋钮）
+        └─> conformal/            # 领域方法（domain）
+        └─> eval/metrics.py       # 覆盖 / 尺寸 / 宽度指标
+        └─> core/                 # 种子 / 配置 / 异常 / 类型 / 接口
 ```
 
-| 模块 | 职责 |
-|------|------|
-| `core.seed` | `set_all(seed)` / `make_rng(seed)` 全局确定性播种 |
-| `core.config` | `Config`：ENV 覆盖 + schema 校验（seed/n_train/n_calib/.../alpha/seeds） |
-| `core.types` | `Dataset`、`ConformalResult`（含 `min_class_coverage`/`under_gap`） |
-| `core.errors` | `ConformalError` 体系 E100~E500 |
-| `core.interfaces` | `DataGenerator` / `BaseLearner` / `ConformalPredictor` Protocol |
-| `data.synthetic` | `GaussianBlobGenerator`、`HeteroscedasticRegGenerator`（固定 seed 可复现） |
-| `data.loaders` | `load_csv()` |
-| `conformal.base` | `Classifier`（sklearn LogisticRegression + numpy 多类牛顿兜底）、`Regressor`（Ridge + 闭式兜底）；标准化仅 fit train |
-| `conformal.scores` | `lac_scores` / `aps_pi` / `raps_pi` / `conformal_quantile`（离散经验分位） |
-| `conformal.classification` | `LACConformal` / `APSConformal` / `RAPSConformal` / `ClassConditional(SCP)` / `ConformalFuse` |
-| `conformal.regression` | `SplitConformal`（基线）/ `RegFuse`（kNN 局部尺度归一化） |
-| `pipeline` | `benchmark()`：多 seed 聚合、基线对照、消融、确定性、噪声自适应、等级判定 |
+每一层只依赖其下方层，禁止反向引用，保证可测试与可复现。
 
-## 3. 关键数学不变量
+## 3. 核心模块
 
-- **覆盖有效性**：分裂保角理论保证 `P(Y_test ∈ C(X_test)) ≥ 1−α`（交换性假设下）。`conformal_quantile` 使用离散阶统计量 `ceil((n+1)(1−α))`，而非插值分位。
-- **类条件公平性（SCP）**：对每个类 `c` 单独估计分位 `q_c`，使各类覆盖尽量均衡；评估用 `under_gap = max(0, (1−α) − min_c coverage_c)`（仅计欠覆盖，避免过覆盖掩盖不公平）。
-- **回归自适应**：RegFuse 用 kNN 估计局部残差尺度 `σ̂(x)`，归一化分数后取分位，使区间宽度随真实 `σ(x)` 变化；以 ρ(半宽, σ(x)) 度量适配度。
+### 3.1 `core/seed.py` — 确定性内核
+- `set_all(seed)`：同时锁定 `PYTHONHASHSEED`、`random`、`numpy.random`，并暴露全局 `_SEEDED` 守卫。
+- 所有随机入口（数据生成、模型初始化）均经此锁定 → 二次运行 `|Δ|=0`。
 
-## 4. 确定性策略
+### 3.2 `core/config.py` — 配置与校验
+- `Config` dataclass：α、覆盖容差、RAPS 正则、校准比例、种子等。
+- 支持 `ENV_CONFORMAL_*` 环境变量覆盖；`validate()` 在非法组合时抛 `ConfigError`。
 
-- 所有随机源（数据生成、模型初始化、APS/RAPS 随机化）均由 `Config.seeds` → `set_all(seed)` 唯一派生。
-- `benchmark()` 对同一任务用同一 seed 序列运行两次，比对 `benchmark.json` 核心字段，`max|delta|==0` 视为逐位一致。
-- 不进行任何依赖墙钟/环境的操作（除 `elapsed_sec` 仅用于预算报告，不参与判定）。
+### 3.3 `core/errors.py` — 异常体系
+- `ConformalError` 基类 + `ConfigError / DataError / ScoreError / FitError / DependencyError`（E1xx–E5xx），
+  区分「配置错误」「数据错误」「依赖缺失」等，便于上层精确处理。
 
-## 5. 无泄漏证明（代码审查结论）
+### 3.4 `conformal/scores.py` — 一致性分数（数学核心）
+- `thr_per_class` / `aps_per_class` / `raps_per_class`：三种有效一致性分数。
+- `_smooth`：Laplace 式平滑（`_EPS=1e-2`）修复 RF 硬 0 概率导致 APS 累积瞬间到 1 的退化，**确定性且不破坏覆盖保证**。
+- `calibration_quantile`：有限样本校正分位 `q̂ = Q_{ceil((n+1)(1−α))/n}({s}∪{∞})`。
 
-- `conformal.base._standardize_fit` 仅在 `X_train` 上 fit；`apply` 用于 calib/test。
-- 校准分位 `conformal_quantile` 仅在 calib 分数上估计；test 集从不接触分位估计过程。
-- 数据生成器的种子与 pipeline 的 `set_all` 序列隔离，避免 calib/test 数据被训练阶段随机性污染。
+### 3.5 `conformal/classifiers.py` — 分类一致性预测
+- `SplitConformalClassifier`：单模型 split conformal（THR/APS/RAPS）。
+- `ConformalFuseClassifier`（旗舰）：RF+LR+GB **集成概率** + 一致性分数 + 全局或**分组**自适应分位；可选 ACI 在线自适应。
+  - 边际覆盖：`Σ π_g·cov_g ≥ 1−α`（Vovk 一致性引理 + 分组 conformal 定理）。
+  - 逐类公平性：分组分位在少数类自适应放宽 → 覆盖率恢复。
 
-## 6. 离线兜底
+### 3.6 `conformal/regression.py` — 回归一致性区间
+- `SplitConformalRegressor`：残差分位（同方差基准）。
+- `CQRRegressor`：Conformalized Quantile Regression（Romano 2019），可换后端。
+- `CQRFuseRegressor`（旗舰）：GB 分位回归 ∩ HistGradientBoosting 分位回归
+  **双基交集融合**（`max-score` 组合）。覆盖由有限样本保证，宽度较 CQR-Linear 窄 25–44%。
 
-- `Classifier` / `Regressor` 在 sklearn 不可用时自动切换纯 numpy 实现（多类牛顿逻辑回归、闭式岭回归）。
-- `available()` 探测机制预留给未来重型后端；缺失时 benchmark 自动跳过并标注 `skipped`，绝不伪造数字。
+> 注意：交集对应 `max(s_a, s_b) ≤ q̂`（min 对应并集、max 对应交集，二者均为有效一致性分数）。
+> 早期误用 min 导致覆盖崩溃，已修正为 max。
 
-## 7. 性能预算
+### 3.7 `pipeline/pipeline.py` — 端到端基准
+- `run_classification`：5 基线（THR-RF / APS-RF / RAPS-RF / RAPS-LR / RAPS-GB）+ 旗舰（全局 + 分组）。
+- `run_regression`：SplitConformal / CQR-Linear / CQR-GB / CQRFuse。
+- 切分固定 `train=0.5 / cal=0.25 / test=0.25`，保证统计意义与低方差。
 
-- demo 端到端 ≤ 60s（CPU，实测 ~9s，seeds=3，n_train=4000）。
-- 内存峰值 < 2GB（合成数据规模下远低于此）。
+## 4. 质量门（SOP）
+
+| 维度 | 要求 | 实测 |
+|------|------|------|
+| 真实数字 | 全部来自运行 | ✅ |
+| 确定性 | 二次运行 `bit_identical` | ✅ `|Δ|=0.00e+00` |
+| 覆盖有效 | `cov ≥ 1−α−tol` | ✅ 全部 ✅ |
+| 融合保覆盖 | 不牺牲 1−α | ✅ 组合引理保证 |
+| 测试 | pytest + CI | ✅ |
+| 复现 | 锁定依赖 + 种子 | ✅ |
+
+## 5. 扩展指南
+
+- 新增分数：在 `scores.py` 实现 `per_class` 接口，返回「越大越不 conform」的矩阵。
+- 新增分类器：在 `classifiers.py` 的 `make_model` 注册，`make_model` 固定 `random_state` 保确定性。
+- 新增生成器：在 `data/generators.py` 实现 `generate(seed)` 并注册 `REGISTRY`。
+- 新增基线：在 `pipeline.pipeline.CLASS_BASELINE / _cqr` 追加元组即可。

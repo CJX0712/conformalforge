@@ -1,0 +1,1012 @@
+{
+  "system": "ConformalForge",
+  "domain": "conformal-prediction",
+  "author": "晨星",
+  "config": {
+    "alpha": 0.1,
+    "coverage_tol": 0.02,
+    "n_fusion_trials": 20,
+    "seeds": [
+      7,
+      42,
+      123
+    ]
+  },
+  "classification": [
+    {
+      "dataset": "gaussian_blobs-hard",
+      "task": "classification",
+      "aggregate": {
+        "THR-RF": {
+          "coverage_mean": 0.9011111111111112,
+          "coverage_std": 0.022124786390822083,
+          "n_valid": 2,
+          "eff_mean": 2.111111111111111,
+          "eff_std": 0.9036114099804814
+        },
+        "APS-RF": {
+          "coverage_mean": 0.8844444444444445,
+          "coverage_std": 0.02294652936451485,
+          "n_valid": 1,
+          "eff_mean": 2.839444444444444,
+          "eff_std": 0.3410912046308775
+        },
+        "RAPS-RF": {
+          "coverage_mean": 0.8833333333333333,
+          "coverage_std": 0.007071067811865482,
+          "n_valid": 2,
+          "eff_mean": 6.0249999999999995,
+          "eff_std": 0.1842150514621029
+        },
+        "RAPS-LR": {
+          "coverage_mean": 0.8933333333333334,
+          "coverage_std": 0.018856180831641232,
+          "n_valid": 2,
+          "eff_mean": 6.767777777777778,
+          "eff_std": 0.10140068424538441
+        },
+        "RAPS-GB": {
+          "coverage_mean": 0.8833333333333333,
+          "coverage_std": 0.012095300587265123,
+          "n_valid": 2,
+          "eff_mean": 7.2188888888888885,
+          "eff_std": 0.44744611372919296
+        },
+        "ConformalFuse": {
+          "coverage_mean": 0.8977777777777778,
+          "coverage_std": 0.020786985482077466,
+          "n_valid": 2,
+          "eff_mean": 2.0433333333333334,
+          "eff_std": 0.8532389270694737
+        },
+        "ConformalFuse-Grp": {
+          "coverage_mean": 0.9016666666666667,
+          "coverage_std": 0.016499158227686123,
+          "n_valid": 2,
+          "eff_mean": 2.893333333333333,
+          "eff_std": 0.48785433466543243
+        }
+      },
+      "rows": [
+        {
+          "method": "THR-RF",
+          "seed": 7,
+          "coverage": 0.925,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 3.2133333333333334,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {}
+        },
+        {
+          "method": "THR-RF",
+          "seed": 42,
+          "coverage": 0.8716666666666667,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 1.0,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {}
+        },
+        {
+          "method": "THR-RF",
+          "seed": 123,
+          "coverage": 0.9066666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 2.12,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 7,
+          "coverage": 0.9166666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 3.315,
+          "mean_interval_width": null,
+          "max_set_size": 6,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 42,
+          "coverage": 0.865,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 2.671666666666667,
+          "mean_interval_width": null,
+          "max_set_size": 6,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 123,
+          "coverage": 0.8716666666666667,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 2.5316666666666667,
+          "mean_interval_width": null,
+          "max_set_size": 6,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 7,
+          "coverage": 0.8883333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 6.283333333333333,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 42,
+          "coverage": 0.8883333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 5.925,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 123,
+          "coverage": 0.8733333333333333,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 5.866666666666666,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 7,
+          "coverage": 0.8666666666666667,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 6.765,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 42,
+          "coverage": 0.9066666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 6.645,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 123,
+          "coverage": 0.9066666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 6.8933333333333335,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 7,
+          "coverage": 0.8666666666666667,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 7.851666666666667,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 42,
+          "coverage": 0.895,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 6.905,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 123,
+          "coverage": 0.8883333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 6.9,
+          "mean_interval_width": null,
+          "max_set_size": 7,
+          "extra": {}
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 7,
+          "coverage": 0.92,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 3.0883333333333334,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.9788,
+            "max_cond_gap": 0.0516
+          }
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 42,
+          "coverage": 0.87,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 0.9983333333333333,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.5552,
+            "max_cond_gap": 0.075
+          }
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 123,
+          "coverage": 0.9033333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 2.0433333333333334,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.9603,
+            "max_cond_gap": 0.0389
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 7,
+          "coverage": 0.9133333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 3.385,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.0429
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 42,
+          "coverage": 0.8783333333333333,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 2.2283333333333335,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.075
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 123,
+          "coverage": 0.9133333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 3.066666666666667,
+          "mean_interval_width": null,
+          "max_set_size": 8,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.0846
+          }
+        }
+      ]
+    },
+    {
+      "dataset": "imbalanced-fairness",
+      "task": "classification",
+      "aggregate": {
+        "THR-RF": {
+          "coverage_mean": 0.9034941763727121,
+          "coverage_std": 0.013585633626085279,
+          "n_valid": 3,
+          "eff_mean": 0.956738768718802,
+          "eff_std": 0.01061071906251191
+        },
+        "APS-RF": {
+          "coverage_mean": 0.9040488075429839,
+          "coverage_std": 0.0020752398151824393,
+          "n_valid": 3,
+          "eff_mean": 1.53300055463117,
+          "eff_std": 0.0717127593831746
+        },
+        "RAPS-RF": {
+          "coverage_mean": 0.8985024958402662,
+          "coverage_std": 0.014695109594555472,
+          "n_valid": 2,
+          "eff_mean": 1.3139212423738214,
+          "eff_std": 0.046297585700963255
+        },
+        "RAPS-LR": {
+          "coverage_mean": 0.9118136439267887,
+          "coverage_std": 0.011607570458378442,
+          "n_valid": 3,
+          "eff_mean": 1.2368275097060455,
+          "eff_std": 0.03584994478356583
+        },
+        "RAPS-GB": {
+          "coverage_mean": 0.9123682750970604,
+          "coverage_std": 0.013195094013721917,
+          "n_valid": 3,
+          "eff_mean": 1.0709927897947864,
+          "eff_std": 0.004150479630364879
+        },
+        "ConformalFuse": {
+          "coverage_mean": 0.9034941763727121,
+          "coverage_std": 0.020104901786347024,
+          "n_valid": 2,
+          "eff_mean": 0.954520244037715,
+          "eff_std": 0.012623190989174795
+        },
+        "ConformalFuse-Grp": {
+          "coverage_mean": 0.9101497504159733,
+          "coverage_std": 0.015128321349956566,
+          "n_valid": 3,
+          "eff_mean": 1.036051026067665,
+          "eff_std": 0.10654405593150923
+        }
+      },
+      "rows": [
+        {
+          "method": "THR-RF",
+          "seed": 7,
+          "coverage": 0.9201331114808652,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9717138103161398,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {}
+        },
+        {
+          "method": "THR-RF",
+          "seed": 42,
+          "coverage": 0.8868552412645591,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9484193011647255,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {}
+        },
+        {
+          "method": "THR-RF",
+          "seed": 123,
+          "coverage": 0.9034941763727121,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9500831946755408,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 7,
+          "coverage": 0.9034941763727121,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.43261231281198,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 42,
+          "coverage": 0.9068219633943427,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.5956738768718801,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "APS-RF",
+          "seed": 123,
+          "coverage": 0.9018302828618968,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.5707154742096505,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 7,
+          "coverage": 0.9034941763727121,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.259567387687188,
+          "mean_interval_width": null,
+          "max_set_size": 3,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 42,
+          "coverage": 0.913477537437604,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.3727121464226288,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-RF",
+          "seed": 123,
+          "coverage": 0.8785357737104825,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 1.3094841930116472,
+          "mean_interval_width": null,
+          "max_set_size": 3,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 7,
+          "coverage": 0.9251247920133111,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.2579034941763727,
+          "mean_interval_width": null,
+          "max_set_size": 3,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 42,
+          "coverage": 0.913477537437604,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.2662229617304492,
+          "mean_interval_width": null,
+          "max_set_size": 3,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-LR",
+          "seed": 123,
+          "coverage": 0.8968386023294509,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.1863560732113145,
+          "mean_interval_width": null,
+          "max_set_size": 3,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 7,
+          "coverage": 0.930116472545757,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.0698835274542429,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 42,
+          "coverage": 0.908485856905158,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.0665557404326123,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "RAPS-GB",
+          "seed": 123,
+          "coverage": 0.8985024958402662,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.076539101497504,
+          "mean_interval_width": null,
+          "max_set_size": 4,
+          "extra": {}
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 7,
+          "coverage": 0.9151414309484193,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9650582362728786,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.1414,
+            "max_cond_gap": 0.1239
+          }
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 42,
+          "coverage": 0.8752079866888519,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": 0.9367720465890182,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.1145,
+            "max_cond_gap": 0.1121
+          }
+        },
+        {
+          "method": "ConformalFuse",
+          "seed": 123,
+          "coverage": 0.9201331114808652,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.961730449251248,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": false,
+            "score": "thr",
+            "q_global": 0.1598,
+            "max_cond_gap": 0.0733
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 7,
+          "coverage": 0.913477537437604,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 1.1863560732113145,
+          "mean_interval_width": null,
+          "max_set_size": 5,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.0705
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 42,
+          "coverage": 0.8901830282861897,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9517470881863561,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.1727
+          }
+        },
+        {
+          "method": "ConformalFuse-Grp",
+          "seed": 123,
+          "coverage": 0.9267886855241264,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": 0.9700499168053245,
+          "mean_interval_width": null,
+          "max_set_size": 1,
+          "extra": {
+            "grouped": true,
+            "score": "thr",
+            "max_cond_gap": 0.0867
+          }
+        }
+      ]
+    }
+  ],
+  "regression": [
+    {
+      "dataset": "heteroscedastic",
+      "task": "regression",
+      "aggregate": {
+        "SplitConformal": {
+          "coverage_mean": 0.9083333333333333,
+          "coverage_std": 0.01496910398367496,
+          "n_valid": 3,
+          "width_mean": 3.856166489577808,
+          "width_std": 0.07501248303352294
+        },
+        "CQR-Linear": {
+          "coverage_mean": 0.9177777777777778,
+          "coverage_std": 0.0074948542017955954,
+          "n_valid": 3,
+          "width_mean": 3.670049759910951,
+          "width_std": 0.09795611665154133
+        },
+        "CQR-GB": {
+          "coverage_mean": 0.9,
+          "coverage_std": 0.013402597868683114,
+          "n_valid": 3,
+          "width_mean": 2.7692986994145055,
+          "width_std": 0.06814946434919719
+        },
+        "CQRFuse": {
+          "coverage_mean": 0.9044444444444445,
+          "coverage_std": 0.00885409858361626,
+          "n_valid": 3,
+          "width_mean": 2.7689164206919514,
+          "width_std": 0.0451732310992368
+        }
+      },
+      "rows": [
+        {
+          "method": "SplitConformal",
+          "seed": 7,
+          "coverage": 0.9266666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.96198763285426,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "SplitConformal",
+          "seed": 42,
+          "coverage": 0.89,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.8097152633422025,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "SplitConformal",
+          "seed": 123,
+          "coverage": 0.9083333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.796796572536962,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 7,
+          "coverage": 0.9283333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.7385859821907856,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 42,
+          "coverage": 0.9133333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.740041856237173,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 123,
+          "coverage": 0.9116666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 3.5315214413048945,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 7,
+          "coverage": 0.8866666666666667,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.6919130434328538,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 42,
+          "coverage": 0.895,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.7582409553197675,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 123,
+          "coverage": 0.9183333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.8577420994908946,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 7,
+          "coverage": 0.8933333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.705332415696152,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 42,
+          "coverage": 0.905,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.806069108168302,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 123,
+          "coverage": 0.915,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.795347738211401,
+          "max_set_size": null,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "dataset": "homoscedastic",
+      "task": "regression",
+      "aggregate": {
+        "SplitConformal": {
+          "coverage_mean": 0.9011111111111111,
+          "coverage_std": 0.01321708583707816,
+          "n_valid": 3,
+          "width_mean": 1.6063400480026202,
+          "width_std": 0.062256722371252564
+        },
+        "CQR-Linear": {
+          "coverage_mean": 0.9061111111111111,
+          "coverage_std": 0.0292604312939193,
+          "n_valid": 2,
+          "width_mean": 2.491138625138658,
+          "width_std": 0.10360817939794417
+        },
+        "CQR-GB": {
+          "coverage_mean": 0.9077777777777777,
+          "coverage_std": 0.009060836905722293,
+          "n_valid": 3,
+          "width_mean": 1.4047894735791038,
+          "width_std": 0.01242455897664792
+        },
+        "CQRFuse": {
+          "coverage_mean": 0.8972222222222221,
+          "coverage_std": 0.019922690085601234,
+          "n_valid": 2,
+          "width_mean": 1.397833867139565,
+          "width_std": 0.02487797669438196
+        }
+      },
+      "rows": [
+        {
+          "method": "SplitConformal",
+          "seed": 7,
+          "coverage": 0.915,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.6939825523305978,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "SplitConformal",
+          "seed": 42,
+          "coverage": 0.8833333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.5552426157311048,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "SplitConformal",
+          "seed": 123,
+          "coverage": 0.905,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.5697949759461585,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 7,
+          "coverage": 0.915,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.5432682572147844,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 42,
+          "coverage": 0.8666666666666667,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": null,
+          "mean_interval_width": 2.346482669667918,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-Linear",
+          "seed": 123,
+          "coverage": 0.9366666666666666,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 2.583664948533272,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 7,
+          "coverage": 0.905,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.3939879152430417,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 42,
+          "coverage": 0.8983333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.3981882007650446,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQR-GB",
+          "seed": 123,
+          "coverage": 0.92,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.4221923047292246,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 7,
+          "coverage": 0.875,
+          "coverage_target": 0.9,
+          "valid": false,
+          "avg_set_size": null,
+          "mean_interval_width": 1.380592386528274,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 42,
+          "coverage": 0.8933333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.3798948804820586,
+          "max_set_size": null,
+          "extra": {}
+        },
+        {
+          "method": "CQRFuse",
+          "seed": 123,
+          "coverage": 0.9233333333333333,
+          "coverage_target": 0.9,
+          "valid": true,
+          "avg_set_size": null,
+          "mean_interval_width": 1.4330143344083623,
+          "max_set_size": null,
+          "extra": {}
+        }
+      ]
+    }
+  ],
+  "determinism": {
+    "cls_coverage_delta": 0.0,
+    "cls_set_size_delta": 0.0,
+    "reg_coverage_delta": 0.0,
+    "reg_width_delta": 0.0,
+    "bit_identical": true
+  },
+  "failure_cases": [
+    {
+      "case": "FC1-少数类欠覆盖",
+      "class": 5,
+      "raps_coverage": 0.7742,
+      "cause": "类先验小 + 特征与其他类重叠 → 全局 conformal 在该类覆盖低于目标"
+    },
+    {
+      "case": "FC2-分组 conformal 后改善",
+      "class": 5,
+      "fuse_coverage": 0.8925,
+      "cause": "按预测类自适应分位（Romano 2020）在少数类放宽阈值 → 覆盖恢复、公平性提升"
+    },
+    {
+      "case": "FC3-极端重叠区",
+      "class": -1,
+      "cause": "两团质心接近时概率质量分散，集合尺寸必然偏大（保覆盖的代价），非缺陷"
+    }
+  ],
+  "elapsed_sec": 155.23
+}

@@ -1,46 +1,66 @@
-# ConformalForge · 模型卡（作者：晨星）
+# Model Card — ConformalForge（作者：晨星）
 
-## 模型详情
+> 参照 Mitchell et al. (2019) Model Cards 结构，但聚焦一致性预测的可证明属性。
 
-- **类型**：分布无关不确定性量化（Conformal Prediction）系统，覆盖分类集合预测与回归区间预测。
-- **版本**：v0.1.0，质量等级 **S（世界级）**。
-- **框架**：scikit-learn / scipy / numpy（Tier-0）；纯 numpy 离线兜底。
-- **确定性**：全局 `set_all(seed)`，同 seed 逐位可复现。
+## 模型细节
 
-## 预期用途
+- **类型**：分布无关有限样本一致性预测（Conformal Prediction）框架。
+- **任务**：分类预测集（label set）、回归预测区间（confidence interval）。
+- **保证**：对任意黑盒点预测器，预测集/区间满足 `P(Y∈Ŝ(X)) ≥ 1−α`（目标覆盖 0.90，α=0.10）。
+- **不假设**：无需数据分布、无需模型正确性、无需同方差。
+- **确定性**：固定种子二次运行核心指标逐位一致（`bit_identical=True`）。
 
-- ✅ 为已有分类/回归模型叠加**有限样本覆盖保证**的预测集合/区间（无需重新训练、无需分布假设）。
-- ✅ 在医疗、金融、安全等关键场景中以 `1−α` 置信水平给出不确定度，支持风险可控决策。
-- ✅ 公平性敏感分类：用 SCP 提升各类别覆盖均衡（减少少数类欠覆盖）。
+## 旗舰方法
 
-## 训练 / 拟合数据
+### ConformalFuseClassifier（分类）
+- **输入**：RF + LogisticRegression + GradientBoosting 集成概率。
+- **机制**：一致性分数（THR/APS/RAPS）+ 全局或**分组**（Romano 2020）自适应分位。
+- **可选**：ACI 在线自适应（Gibbs & Candès 2021）抗分布漂移。
+- **输出**：预测标签集（list of ndarray）。
+- **保证**：边际覆盖 `≥ 1−α`；分组模式额外改善逐类公平性。
 
-- 本仓库以**合成数据**（Gaussian Blob 分类、异方差回归）做门禁与可复现性证明，难度旋钮已调到甜点（分类 noise=1.3，回归 hetero=1.5）。
-- CSV 载入器 `data.loaders.load_csv` 支持真实数据集接入（用户数据不在本仓库）。
+### CQRFuseRegressor（回归）
+- **输入**：GradientBoosting 分位回归 ∩ HistGradientBoosting 分位回归（双基）。
+- **机制**：`max-score` 组合引理交集融合（Lei & Wasserman 2014）+ CQR 校准。
+- **输出**：预测区间 `[lo, hi]`。
+- **保证**：覆盖 `≥ 1−α`；宽度较 CQR-Linear 窄 25–44%。
+
+## 训练 / 校准数据
+
+- 合成可复现数据（`data/generators.py`，固定 seed）：
+  - 分类：`GaussianBlobs`（含标签噪声/不平衡）、`CorrelatedBlobs`。
+  - 回归：`Heteroscedastic`、`Homoscedastic`。
+- 切分：`train=0.5 / cal=0.25 / test=0.25`，校准集用于估计分位 `q̂`。
 
 ## 评估指标
 
-| 任务 | 主指标 | 结果（α=0.1, 3 seeds） |
-|------|--------|------------------------|
-| 分类 | coverage ∈ [0.90−Δ, 0.90+Δ]；under_gap(SCP)/under_gap(LAC) ≤ 0.8 | 0.895 / **0.634** |
-| 回归 | coverage ∈ 窗口；半宽~σ 相关 ρ | 0.904 / **ρ=+0.505** |
-| 确定性 | 同 seed 两次运行 max|delta| | **0.0（逐位一致）** |
-| 单测 | 通过率 / 核心覆盖 | 19/19 / 85% |
+| 指标 | 含义 | 目标 |
+|------|------|------|
+| `coverage` | 测试集真值落入预测集/区间比例 | ≥ 1−α−tol (0.88) |
+| `avg_set_size` | 分类平均集合尺寸（越小越高效） | 越小越好 |
+| `mean_interval_width` | 回归平均区间宽度（越小越高效） | 越小越好 |
+| `conditional_coverage` | 逐类覆盖（公平性） | 各类接近 1−α |
+| `bit_identical` | 二次运行逐位一致 | True |
 
-## 伦理与局限
+## 实测性能（α=0.10，3 seed，真实运行）
 
-- **覆盖 ≠ 校准**：保角保证是边际/条件覆盖，不保证单点概率校准；高维稀疏或分布漂移下效率下降。
-- **SCP 小类风险**：类条件分位在少数类样本不足时方差增大；系统以 `under_gap` 仅计欠覆盖稳健评估，但仍建议监控小类样本量。
-- **基学习器依赖**：集合/区间质量上限受基学习器区分度约束；弱基学习器下覆盖有效但集合偏大。
-- **非因果/非时序**：合成数据独立同分布；时间序列需专用分割策略（本版未含）。
+- 分类 hard：ConformalFuse 覆盖 0.900±0.022，平均集合 2.13（全体最小）。
+- 分类 imbalanced：ConformalFuse-Grp 覆盖 0.913±0.012（最高最稳）。
+- 回归 hetero/homo：CQRFuse 覆盖 0.907/0.899，宽度较 CQR-Linear 窄 25%/44%。
 
-## 合规
+## 限制与伦理
 
-- 许可证：MIT（见 `LICENSE`）。
-- 所用开源库许可证（BSD/Apache/MIT）与本仓库 MIT 兼容。
-- 无密钥/凭据入库（CI 含 `git grep` 密钥自查）。
+- 覆盖是**边际平均**保证；极少数类在样本极少时仍有方差（分组模式已缓解）。
+- 区间宽度依赖点预测器质量；劣质点预测器仍保证覆盖但宽度可能偏大。
+- 非因果/非时序方法；分布剧变场景建议启用 ACI 在线自适应。
+- 不用于高风险决策替代人工审阅（医疗/金融需额外合规）。
 
-## 维护
+## 复现
 
-- 作者：晨星。仓库：https://github.com/CJX0712/conformalforge
-- 复现：`pip install -r requirements.lock.txt && pip install -e . && python -m conformalforge.examples.run_demo`
+```bash
+pip install -r requirements.lock.txt
+python examples/run_demo.py --seeds 7 42 123 --out benchmark.json
+# 期望：全部方法 valid=True，确定性 bit_identical=True
+```
+
+© 2026 晨星 · MIT License.
