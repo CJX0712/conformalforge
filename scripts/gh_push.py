@@ -276,19 +276,27 @@ def _now_iso() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
+def _gh_api_safe(method: str, path: str, data=None):
+    """GET 等查询在 404（不存在）时返回 None，不抛异常。"""
+    try:
+        return gh_api(method, path, data, retries=1)
+    except RuntimeError:
+        return None
+
+
 def create_tag_and_release(repo_full: str, tag: str, release_notes: str) -> None:
     commit_sha = ""
     # 取得默认分支最新 commit
-    br_res = gh_api("GET", f"repos/{repo_full}", retries=1)
+    br_res = _gh_api_safe("GET", f"repos/{repo_full}")
     default_branch = (br_res.get("default_branch") if isinstance(br_res, dict) else None) or "main"
-    ref_res = gh_api("GET", f"repos/{repo_full}/git/refs/heads/{default_branch}", retries=1)
+    ref_res = _gh_api_safe("GET", f"repos/{repo_full}/git/refs/heads/{default_branch}")
     if isinstance(ref_res, dict) and "object" in ref_res:
         commit_sha = ref_res["object"]["sha"]
     if not commit_sha:
         log("无法取得 commit sha，跳过 tag/release。")
         return
     # tag 已存在则删除重建
-    tag_get = gh_api("GET", f"repos/{repo_full}/git/refs/tags/{tag}", retries=1)
+    tag_get = _gh_api_safe("GET", f"repos/{repo_full}/git/refs/tags/{tag}")
     if isinstance(tag_get, dict) and "object" in tag_get:
         log(f"tag {tag} 已存在，删除后重建。")
         gh_api("DELETE", f"repos/{repo_full}/git/refs/tags/{tag}", retries=1)
@@ -302,7 +310,7 @@ def create_tag_and_release(repo_full: str, tag: str, release_notes: str) -> None
     )
     log(f"tag {tag} -> {commit_sha[:10]}")
     # release
-    rel_res = gh_api("GET", f"repos/{repo_full}/releases/tags/{tag}", retries=1)
+    rel_res = _gh_api_safe("GET", f"repos/{repo_full}/releases/tags/{tag}")
     if isinstance(rel_res, dict) and "id" in rel_res:
         log("release 已存在，更新。")
         gh_api(
