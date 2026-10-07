@@ -64,17 +64,17 @@ def run(cmd, check=True, retries=1, mask=False):
 
 
 def gh_api(method: str, path: str, data=None, retries=MAX_RETRIES):
-    """Call GitHub REST API through the authenticated `gh` CLI."""
-    cmd = f'{GH} api {method} "{path}"'
+    """Call GitHub REST API through the authenticated `gh` CLI (argv form, -X METHOD)."""
+    cmd = [GH, "api", path, "-X", method]
     if data is not None:
-        payload = json.dumps(data)
-        cmd += " --input -"
+        cmd += ["--input", "-"]
+    payload = json.dumps(data) if data is not None else None
     for i in range(retries):
         try:
             p = subprocess.run(
                 cmd,
-                shell=True,
-                input=(payload if data is not None else None),
+                shell=False,
+                input=payload,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
@@ -219,8 +219,7 @@ def L2_gitdata_push(local: str, repo_full: str, branch: str) -> bool:
             "author": {"name": AUTHOR_NAME, "email": AUTHOR_EMAIL, "date": _now_iso()},
             "committer": {"name": AUTHOR_NAME, "email": AUTHOR_EMAIL, "date": _now_iso()},
         }
-        if parent_sha:
-            commit_data["parents"] = [parent_sha]
+        commit_data["parents"] = [parent_sha] if parent_sha else []
         commit_res = gh_api("POST", f"repos/{repo_full}/git/commits", commit_data)
         commit_sha = commit_res["sha"]
         # 4) 更新 / 创建 ref
@@ -348,8 +347,10 @@ def main() -> int:
 
     # 初始化 git（如需）
     if not args.skip_git_init and not os.path.isdir(os.path.join(local, ".git")):
-        run(f'git -C "{local}" init -q')
+        run(f'git -C "{local}" init -q -b main')
     configure_git(local)
+    # 统一使用 main 分支，匹配 GitHub 默认分支
+    run(f'git -C "{local}" checkout -B main', check=False)
 
     # 确保仓库存在
     ensure_repo(args.repo, args.description, public=not args.private)
@@ -359,7 +360,7 @@ def main() -> int:
 
     # 三级降级推送
     pushed = False
-    branch = detect_branch(local)
+    branch = "main"
     try:
         pushed = L1_git_push(local, repo_full)
     except Exception as e:
